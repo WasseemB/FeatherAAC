@@ -1,7 +1,10 @@
 package com.wasseemb.FeatherForReddit.Adapter
 
+import android.arch.paging.PagedListAdapter
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
+import android.support.v7.recyclerview.extensions.ListAdapter
+
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
@@ -9,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import com.wasseemb.FeatherForReddit.Adapter.PostsAdapter.RedditPostViewHolder
+import com.wasseemb.featheraac.Adapter.RedditItemCallBack
 import com.wasseemb.featheraac.Api.RedditChildrenResponse
 import com.wasseemb.featheraac.Api.RedditPost
 import com.wasseemb.featheraac.Extensions.autoNotify
@@ -21,7 +25,7 @@ import kotlin.properties.Delegates
 /**
  * Created by Wasseem on 31/07/2017.
  */
-class PostsAdapter : RecyclerView.Adapter<RedditPostViewHolder>() {
+class PostsAdapter : PagedListAdapter<RedditChildrenResponse,RedditPostViewHolder>(RedditItemCallBack()) {
   lateinit var itemClickListener: ItemClickListener
   lateinit var picasso: Picasso
 
@@ -30,22 +34,19 @@ class PostsAdapter : RecyclerView.Adapter<RedditPostViewHolder>() {
     fun onItemClick(redditChildrenResponse: RedditChildrenResponse)
   }
 
-  override fun getItemCount(): Int {
 
-    return itemList.size
-  }
 
-  var itemList: List<RedditChildrenResponse> by Delegates.observable(
-      emptyList()) { _, old, new ->
-    autoNotify(old, new) { o, n -> o.data.id == n.data.id }
-  }
+//  var itemList: List<RedditChildrenResponse> by Delegates.observable(
+//      emptyList()) { _, old, new ->
+//    autoNotify(old, new) { o, n -> o.data.id == n.data.id }
+//  }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RedditPostViewHolder {
     val viewHolder = RedditPostViewHolder(parent.inflate(R.layout.view_item_con))
     viewHolder.itemView.setOnClickListener {
       val position = viewHolder.adapterPosition
       if (position != RecyclerView.NO_POSITION) {
-        itemClickListener.onItemClick(itemList[position])
+        itemClickListener.onItemClick(getItem(position)!!)
       }
     }
     return viewHolder
@@ -54,11 +55,11 @@ class PostsAdapter : RecyclerView.Adapter<RedditPostViewHolder>() {
 
   override fun onBindViewHolder(vh: RedditPostViewHolder, position: Int) {
 
-    vh.bindTo(itemList[position].data, picasso)
+    vh.bindTo(getItem(position)!!.data, picasso)
   }
 
 
-  override fun onViewRecycled(holder: RedditPostViewHolder?) {
+  override fun onViewRecycled(holder: RedditPostViewHolder) {
     if (holder != null) {
       picasso.cancelRequest(holder.imageView)
       holder.imageView.visibility = View.VISIBLE
