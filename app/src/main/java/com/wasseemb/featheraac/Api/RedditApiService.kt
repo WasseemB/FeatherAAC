@@ -2,6 +2,9 @@ package com.wasseemb.featheraac.Api
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -30,6 +33,20 @@ interface RedditApiService {
           "t") time: String?)
       : LiveData<RedditNewsResponse>
 
+  companion object {
+    private const val API_URL = "https://www.reddit.com"
+    fun create(): RedditApiService {
+      val retrofit = Retrofit.Builder()
+          .addConverterFactory(
+              GsonConverterFactory.create())
+          .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
+          .baseUrl(API_URL)
+
+          // .client(httpClient.build())
+          .build()
+      return retrofit.create(RedditApiService::class.java)
+    }
+  }
 }
 

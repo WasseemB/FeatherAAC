@@ -41,8 +41,8 @@ class SubredditFragment : Fragment() {
     viewModel = ViewModelProviders.of(this).get(RedditNewsResponseViewModel::class.java)
     setUpRecyclerView(view)
     if (arguments != null) {
-      openSub(arguments.getString(
-          ARG_CAUGHT))
+//      openSub(arguments!!.getString(
+//          ARG_CAUGHT))
     }
     // Inflate the layout for this fragment
 
@@ -50,20 +50,17 @@ class SubredditFragment : Fragment() {
   }
 
 
-  fun clearRecyclerView() {
-    adapter.itemList = emptyList()
-  }
 
 
   private fun setUpRecyclerView(view: View) {
     recyclerView = view.findViewById(R.id.recyclerview)
     recyclerView.layoutManager = LinearLayoutManager(
-        activity.applicationContext, LinearLayoutManager.VERTICAL, false)
+        activity?.applicationContext, LinearLayoutManager.VERTICAL, false)
     recyclerView.setHasFixedSize(true)
     recyclerView.setItemViewCacheSize(10)
     recyclerView.isDrawingCacheEnabled = true
     recyclerView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-    val layoutManager = LinearLayoutManager(activity.applicationContext,
+    val layoutManager = LinearLayoutManager(activity?.applicationContext,
         LinearLayout.VERTICAL, false)
     recyclerView.layoutManager = layoutManager
     adapter = PostsAdapter()
@@ -76,29 +73,30 @@ class SubredditFragment : Fragment() {
   }
 
 
-  fun openSub(sub: String) {
-    val observer = Observer<RedditNewsResponse> { t ->
-      t?.data?.children?.let {
-        recyclerView.post {
-          adapter.itemList += t.data.children
-          Log.d("MainActivity", "AndroidSub")
-          after = t.data.after
-          //swipeRefreshLayout.isRefreshing = false
-
-        }
-      }
-    }
-
-    viewModel.loadSub("android").observe(this, observer)
-    recyclerView.addOnScrollListener(
-        InfiniteScrollListener({
-          viewModel.loadSub(subreddit = "android", mode = "hot", time = null, after = after,
-              sort = null).observe(this, observer)
-        }, recyclerView.layoutManager as LinearLayoutManager)
-    )
-
-    viewModel.setSub(sub)
-  }
+//  fun openSub(sub: String) {
+//    val observer = Observer<RedditNewsResponse> { t ->
+//      t?.data?.children?.let {
+//        recyclerView.post {
+//          // adapter.itemList += t.data.children
+//          adapter.submitList(t.data.children)
+//          Log.d("MainActivity", "AndroidSub")
+//          after = t.data.after
+//          //swipeRefreshLayout.isRefreshing = false
+//
+//        }
+//      }
+//    }
+//
+//    viewModel.loadSub("android").observe(this, observer)
+//    recyclerView.addOnScrollListener(
+//        InfiniteScrollListener({
+//          viewModel.loadSub(subreddit = "android", mode = "hot", time = null, after = after,
+//              sort = null).observe(this, observer)
+//        }, recyclerView.layoutManager as LinearLayoutManager)
+//    )
+//
+//    viewModel.setSub(sub)
+//  }
 
   companion object {
     private val ARG_CAUGHT = "sub"
