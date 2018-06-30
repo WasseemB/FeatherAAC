@@ -2,12 +2,12 @@ package com.wasseemb.featheraac.Fragments
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +15,7 @@ import android.widget.LinearLayout
 import com.squareup.picasso.Picasso
 import com.wasseemb.FeatherForReddit.Adapter.PostsAdapter
 import com.wasseemb.FeatherForReddit.Adapter.PostsAdapter.ItemClickListener
-import com.wasseemb.featheraac.Adapter.InfiniteScrollListener
-import com.wasseemb.featheraac.Api.RedditNewsResponse
+import com.wasseemb.featheraac.Api.RedditChildrenResponse
 import com.wasseemb.featheraac.R
 import com.wasseemb.featheraac.R.layout
 import com.wasseemb.featheraac.ViewModel.RedditNewsResponseViewModel
@@ -31,9 +30,7 @@ class SubredditFragment : Fragment() {
   lateinit var viewModel: RedditNewsResponseViewModel
   lateinit var adapter: PostsAdapter
   lateinit var itemClickListener: ItemClickListener
-
-
-  var after: String? = null
+  var subreddit: String? = null
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
@@ -41,6 +38,10 @@ class SubredditFragment : Fragment() {
     viewModel = ViewModelProviders.of(this).get(RedditNewsResponseViewModel::class.java)
     setUpRecyclerView(view)
     if (arguments != null) {
+      observeViewModel(viewModel)
+      subreddit = arguments?.getString(ARG_CAUGHT)
+      viewModel.setSub(subreddit!!)
+
 //      openSub(arguments!!.getString(
 //          ARG_CAUGHT))
     }
@@ -48,8 +49,6 @@ class SubredditFragment : Fragment() {
 
     return view
   }
-
-
 
 
   private fun setUpRecyclerView(view: View) {
@@ -70,6 +69,12 @@ class SubredditFragment : Fragment() {
     recyclerView.addItemDecoration(dividerItemDecoration)
     adapter.itemClickListener = itemClickListener
     recyclerView.adapter = adapter//To change body of created functions use File | Settings | File Templates.
+  }
+
+  private fun observeViewModel(viewModel: RedditNewsResponseViewModel) {
+    viewModel.loadSub().observe(this, Observer<PagedList<RedditChildrenResponse>> {
+      adapter.submitList(it)
+    })
   }
 
 

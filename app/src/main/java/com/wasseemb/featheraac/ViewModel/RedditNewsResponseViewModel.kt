@@ -63,13 +63,10 @@ class RedditNewsResponseViewModel(application: Application) : AndroidViewModel(a
     this.subreddit.value = subreddit
   }
 
-  fun loadSub(subreddit: String, mode: String = "hot", after: String? = "null",
-      sort: String? = "null",
-      time: String? = null): LiveData<RedditNewsResponse> {
-    val liveList = Transformations.switchMap(this.subreddit) { sub ->
-      redditPostRepository.openSub(sub, mode, after, sort, time)
+  fun loadSub(): LiveData<PagedList<RedditChildrenResponse>> {
+    return Transformations.switchMap(this.subreddit) { sub ->
+      redditPostRepository.getSubReddit(sub)
     }
-    return liveList
   }
 
 }

@@ -64,4 +64,5 @@ class DetailFragment : Fragment() {
     }
 
   }
+
 }// Required empty public constructor
