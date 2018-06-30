@@ -1,6 +1,5 @@
 package com.wasseemb.featheraac.Api
 
-import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -25,13 +24,6 @@ interface RedditApiService {
   fun openSub(@Path("subreddit") subreddit: String, @Path("mode") mode: String,
       @Query("after") after: String?, @Query("sort") sort: String?, @Query(
           "t") time: String?): Observable<RedditNewsResponse>
-
-  @GET("/{mode}/.json")
-  fun getNewsSorst(
-      @Path("mode") mode: String, @Query("limit") limit: String?, @Query(
-          "after") after: String?, @Query("sort") sort: String?, @Query(
-          "t") time: String?)
-      : LiveData<RedditNewsResponse>
 
   companion object {
     private const val API_URL = "https://www.reddit.com"

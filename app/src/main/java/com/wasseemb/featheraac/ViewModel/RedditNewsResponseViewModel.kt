@@ -18,41 +18,28 @@ import com.wasseemb.featheraac.Repositories.RedditPostRepository
  */
 
 class RedditNewsResponseViewModel(application: Application) : AndroidViewModel(application) {
-  private var mApiResponse: MediatorLiveData<RedditNewsResponse> = MediatorLiveData()
+//  private var mApiResponse: MediatorLiveData<RedditNewsResponse> = MediatorLiveData()
   private val redditPostRepository = RedditPostRepository()
   private val subreddit = MutableLiveData<String>()
   private val frontPage = MutableLiveData<String>()
 
 
-  @NonNull
-  fun getApiResponse(): LiveData<RedditNewsResponse> {
-    return mApiResponse as LiveData<RedditNewsResponse>
-  }
-
-  fun loadFrontPage(mode: String, limit: String?, after: String?, sort: String?,
-      time: String?): LiveData<RedditNewsResponse> {
-    val mApiResponse = mApiResponse
-    mApiResponse.addSource(
-        redditPostRepository.getRedditNewsResponse(mode, limit, after, sort, time),
-        { apiResponse -> mApiResponse.value = apiResponse }
-    )
-    return mApiResponse
-
-  }
+//  fun loadFrontPage(mode: String, limit: String?, after: String?, sort: String?,
+//      time: String?): LiveData<RedditNewsResponse> {
+//    val mApiResponse = mApiResponse
+//    mApiResponse.addSource(
+//        redditPostRepository.getRedditNewsResponse(mode, limit, after, sort, time),
+//        { apiResponse -> mApiResponse.value = apiResponse }
+//    )
+//    return mApiResponse
+//
+//  }
 
 
   fun getFrontPage(): LiveData<PagedList<RedditChildrenResponse>> {
     return Transformations.switchMap(frontPage) {
       redditPostRepository.getFrontPage()
     }
-  }
-
-  fun loadFrontPageX(mode: String, limit: String?, after: String?, sort: String?,
-      time: String?): LiveData<RedditNewsResponse> {
-    val liveList = Transformations.switchMap(this.frontPage) { _ ->
-      redditPostRepository.getRedditNewsResponse(mode, limit, after, sort, time)
-    }
-    return liveList
   }
 
   fun setFront(frontPage: String) {
